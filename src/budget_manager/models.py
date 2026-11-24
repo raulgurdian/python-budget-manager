@@ -1,4 +1,5 @@
 """Transaction representation and the six-field data contract."""
+from __future__ import annotations
 
 FIELDNAMES = ("id", "date", "kind", "category", "amount", "currency")
 

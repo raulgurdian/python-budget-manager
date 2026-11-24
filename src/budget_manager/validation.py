@@ -1,4 +1,5 @@
 """Checks applied when transactions enter from the CLI or a CSV file."""
+from __future__ import annotations
 
 from datetime import date as calendar_date
 import math

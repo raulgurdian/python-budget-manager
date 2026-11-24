@@ -4,7 +4,7 @@ A small, dependency-free Python CLI that records income and expenses, reports ba
 
 ## Requirements and setup
 
-- Python **3.10+**; no third-party packages.
+- Python **3.9+**; no third-party packages. On macOS/Linux the command may be `python3` instead of `python`.
 - Clone or download this repository; open a terminal in the repository root.
 - Set the source path so Python can find the package:
 
@@ -71,7 +71,7 @@ Each transaction has exactly six fields: `id`, `date`, `kind`, `category`, `amou
 ## Known limitations / Release 2 ideas
 
 - The CLI saves/loads a default `transactions.csv` in the working directory; unsaved changes are lost upon exit.
-- CSV save overwrites the destination file; always load before replacing stored data.
+- CSV save overwrites the destination file; always load before replacing stored data. Saving an empty list over an existing file asks for confirmation first.
 - Only EUR and USD are accepted; totals are separated by currency, with no exchange rate conversion.
 - Monetary totals use floating-point arithmetic, sufficient for this introductory exercise but not ideal for financial accounting; a future release should use `Decimal`.
 - No undo, editing, budget limits, authentication, or multi-user support (outside Release 1).

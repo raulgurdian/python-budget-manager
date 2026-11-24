@@ -1,4 +1,5 @@
 """Command-line interaction; delegates domain rules and files to other modules."""
+from __future__ import annotations
 
 from pathlib import Path
 from .models import FIELDNAMES
@@ -49,6 +50,12 @@ def main() -> None:
             elif choice == "3":
                 print_summary(transactions)
             elif choice == "4":
+                if not transactions and DEFAULT_FILE.exists():
+                    answer = input(f"No transactions in memory. Overwrite {DEFAULT_FILE} "
+                                   "with an empty list? (y/n): ").strip().lower()
+                    if answer != "y":
+                        print("Save cancelled; file left unchanged.")
+                        continue
                 save_transactions(transactions, DEFAULT_FILE)
                 print(f"Saved {len(transactions)} transactions to {DEFAULT_FILE}.")
             elif choice == "5":
@@ -60,6 +67,8 @@ def main() -> None:
                 break
             else:
                 print("Invalid option; choose 1-6.")
+        except FileNotFoundError:
+            print(f"Error: {DEFAULT_FILE} not found. Add transactions and save (option 4) first.")
         except (ValueError, OSError) as error:
             print(f"Error: {error}")
         except (EOFError, KeyboardInterrupt):

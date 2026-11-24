@@ -1,4 +1,5 @@
 """Pure business operations; no printing, prompting, or filesystem I/O."""
+from __future__ import annotations
 
 from .validation import validate_transaction
 
