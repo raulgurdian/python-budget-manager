@@ -1,0 +1,6 @@
+id,date,kind,category,amount,currency
+T001,2026-09-04,income,salary,2000.0,EUR
+T002,2026-09-05,expense,food,18.5,EUR
+T003,2026-09-06,expense,transport,35.0,EUR
+T004,2026-09-07,income,salary,500.0,USD
+T005,2026-09-08,expense,housing,200.0,USD
