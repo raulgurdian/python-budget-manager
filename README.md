@@ -77,6 +77,14 @@ Each transaction has exactly six fields: `id`, `date`, `kind`, `category`, `amou
 - No undo, editing, budget limits, authentication, or multi-user support (outside Release 1).
 - A failed file write may leave a partially written destination; atomic saving could be added in Release 2.
 
+## Reflection (exit ticket)
+
+**What did I verify?** I verified that a CSV with an invalid row is rejected with its exact row number: `test_import_reports_row_number` writes a file whose second transaction has amount `-4`, and the test confirms the error is `Row 3: amount must be greater than zero and finite.` I also confirmed that adding a duplicate ID raises an error and leaves the transaction list unchanged.
+
+**Which boundary changed my design?** Mixing currencies. My first idea was a single balance, but adding EUR and USD together without an exchange rate gives a meaningless number, so the report keeps separate totals for each currency.
+
+**What would I refactor next?** In Release 2 I would change amounts from `float` to `Decimal` in `validation.py` and `services.py`, because floating-point arithmetic can cause small rounding errors in money totals.
+
 ## Submission evidence
 
 See `DESIGN.md` for architecture rationale, `AI_DISCLOSURE.md` for assistance disclosure, `data/sample_transactions.csv` for valid sample records, and `data/invalid_transactions.csv` for a deliberate failing example.
