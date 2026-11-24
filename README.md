@@ -46,7 +46,7 @@ PYTHONPATH=src python -m unittest discover -s tests -v
 
 On Windows PowerShell after setting `PYTHONPATH`, use `python -m unittest discover -s tests -v`.
 
-The tests cover normal add/report behavior, negative and zero amounts, duplicate IDs, missing fields, invalid dates, unsupported values, non-finite numbers, separate currencies, CSV round-trip, invalid import with row numbers, and a missing file.
+The tests cover normal add/report behavior, negative and zero amounts, duplicate IDs, missing fields, invalid dates, unsupported values, non-finite numbers, separate currencies, CSV round-trip, invalid import with row numbers, every file in `data/` (valid and invalid), and a missing file.
 
 ## Data contract and input rules
 
@@ -59,6 +59,40 @@ Each transaction has exactly six fields: `id`, `date`, `kind`, `category`, `amou
 - `amount`: positive, finite number converted to `float`.
 - `currency`: `EUR` or `USD` (documented project restriction).
 - Transactions with missing or extra fields are rejected; CSV imports are validated row by row and report the failing row.
+
+## Acceptance criteria
+
+Each rule below is checked by the tests or by a sample file in `data/`.
+
+| Input | Expected result |
+|---|---|
+| `T001, 2026-09-04, expense, food, 18.50, EUR` | Accepted; report shows EUR balance `-18.50` |
+| Amount `-10` | Rejected: `amount must be greater than zero and finite.` |
+| Amount `0` | Rejected: `amount must be greater than zero and finite.` |
+| Amount `oops`, `nan` or `inf` | Rejected: amount must be a positive, finite number |
+| Date `2026-02-30` or `10/09/2026` | Rejected: `date must be a valid date in YYYY-MM-DD format.` |
+| Category `holidays` | Rejected: `category must be one of: entertainment, food, housing, other, salary, transport.` |
+| Kind `refund` or `Expense` | Rejected: `kind must be income or expense.` (no silent case correction) |
+| Currency `GBP` | Rejected: `currency must be one of: EUR, USD.` |
+| ID `T001` added twice | Rejected: `Duplicate transaction ID: T001.`; list stays unchanged |
+| EUR and USD transactions | Reported separately; never added together |
+| CSV with a bad row 3 | Whole file rejected with `Row 3: ...`; current data is not replaced |
+| Save then load | Same transactions come back, amounts as numbers |
+
+### Sample data
+
+- `data/sample_transactions.csv`: five valid transactions in EUR and USD.
+- Invalid files, one broken rule each (copy one to `transactions.csv` and choose **5** to see the error):
+
+| File | Expected error |
+|---|---|
+| `invalid_transactions.csv` | `Row 2: amount must be greater than zero and finite.` |
+| `invalid_zero_amount.csv` | `Row 3: amount must be greater than zero and finite.` |
+| `invalid_date.csv` | `Row 3: date must be a valid date in YYYY-MM-DD format.` |
+| `invalid_category.csv` | `Row 3: category must be one of: ...` |
+| `invalid_currency.csv` | `Row 3: currency must be one of: EUR, USD.` |
+| `invalid_duplicate_id.csv` | `Row 3: Duplicate transaction ID: T001.` |
+| `invalid_header.csv` | `Row 1: CSV headers must be: id, date, kind, category, amount, currency.` |
 
 ## Modules
 
@@ -87,4 +121,4 @@ Each transaction has exactly six fields: `id`, `date`, `kind`, `category`, `amou
 
 ## Submission evidence
 
-See `DESIGN.md` for architecture rationale, `AI_DISCLOSURE.md` for assistance disclosure, `data/sample_transactions.csv` for valid sample records, and `data/invalid_transactions.csv` for a deliberate failing example.
+See `DESIGN.md` for architecture rationale, `AI_DISCLOSURE.md` for assistance disclosure, `data/sample_transactions.csv` for valid sample records, and the `data/invalid_*.csv` files for deliberate failing examples (one per validation rule).

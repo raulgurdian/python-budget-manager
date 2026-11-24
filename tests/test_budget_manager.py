@@ -80,6 +80,22 @@ class BudgetManagerTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "Row 3:.*amount"):
                 load_transactions(path)
 
+    def test_sample_data_files(self):
+        data_dir = Path(__file__).resolve().parent.parent / "data"
+        self.assertEqual(len(load_transactions(data_dir / "sample_transactions.csv")), 5)
+        expected = {
+            "invalid_transactions.csv": "Row 2:.*amount",
+            "invalid_zero_amount.csv": "Row 3:.*amount",
+            "invalid_date.csv": "Row 3:.*date",
+            "invalid_category.csv": "Row 3:.*category",
+            "invalid_currency.csv": "Row 3:.*currency",
+            "invalid_duplicate_id.csv": "Row 3:.*Duplicate",
+            "invalid_header.csv": "Row 1:.*headers",
+        }
+        for filename, message in expected.items():
+            with self.subTest(file=filename), self.assertRaisesRegex(ValueError, message):
+                load_transactions(data_dir / filename)
+
     def test_file_not_found(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             with self.assertRaises(FileNotFoundError):
